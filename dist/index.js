@@ -16647,10 +16647,16 @@ const run = async () => {
 			deploymentUrls.push(addSchema(alias))
 		}
 
-		if (!IS_PR && ALIAS_DOMAINS) {
+		if (ALIAS_DOMAINS) {
 			core.info(`Assigning custom domains to Vercel deployment`)
 
 			for (let i = 0; i < ALIAS_DOMAINS.length; i++) {
+				if (ALIAS_DOMAINS[i].includes('{PR}')) {
+					core.warning(`Cannot use {PR} in ALIAS_DOMAINS. It's intended for PR_PREVIEW_DOMAIN config only.`
+					)
+					continue
+				}
+
 				const alias = ALIAS_DOMAINS[i]
 					.replace('{USER}', USER)
 					.replace('{REPO}', REPOSITORY)
