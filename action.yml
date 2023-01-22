@@ -63,6 +63,10 @@ inputs:
     description: |
       Assign a custom domain to the PR preview deployment.
     required: false
+  PRIMARY_ALIAS:
+    description: |
+      The domain to use as the alias when posting a link to the PR preview deployment. Defaults to PR_PREVIEW_DOMAIN. Set to {AUTO} to use the domain automatically assigned by Vercel.
+    required: false
   VERCEL_SCOPE:
     description: |
       Execute commands from a different Vercel team or user.

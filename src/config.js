@@ -71,6 +71,9 @@ const context = {
 	PR_PREVIEW_DOMAIN: parser.getInput({
 		key: 'PR_PREVIEW_DOMAIN'
 	}),
+	PRIMARY_ALIAS: parser.getInput({
+		key: 'PRIMARY_ALIAS'
+	}),
 	VERCEL_SCOPE: parser.getInput({
 		key: 'VERCEL_SCOPE'
 	}),

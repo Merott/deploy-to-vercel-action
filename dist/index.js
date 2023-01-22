@@ -15957,6 +15957,9 @@ const context = {
 	PR_PREVIEW_DOMAIN: parser.getInput({
 		key: 'PR_PREVIEW_DOMAIN'
 	}),
+	PRIMARY_ALIAS: parser.getInput({
+		key: 'PRIMARY_ALIAS'
+	}),
 	VERCEL_SCOPE: parser.getInput({
 		key: 'VERCEL_SCOPE'
 	}),
@@ -16584,6 +16587,7 @@ const {
 	UPDATE_EXISTING_COMMENT,
 	PR_PREVIEW_DOMAIN,
 	ALIAS_DOMAINS,
+	PRIMARY_ALIAS,
 	ATTACH_COMMIT_METADATA,
 	LOG_URL,
 	DEPLOY_PR_FROM_FORK,
@@ -16702,7 +16706,18 @@ const run = async () => {
 		}
 
 		deploymentUrls.push(addSchema(deploymentUrl))
-		const previewUrl = deploymentUrls[0]
+
+		if (
+			PRIMARY_ALIAS &&
+      PRIMARY_ALIAS !== '{AUTO}' &&
+      !deploymentUrls.includes(PRIMARY_ALIAS)
+		) {
+			deploymentUrls.push(addSchema(PRIMARY_ALIAS))
+		}
+
+		const previewUrl = !PRIMARY_ALIAS ?
+			deploymentUrls[0] :
+			addSchema(PRIMARY_ALIAS === '{AUTO}' ? deploymentUrl : PRIMARY_ALIAS)
 
 		const deployment = await vercel.getDeployment()
 		core.info(`Deployment "${ deployment.id }" available at: ${ deploymentUrls.join(', ') }`)
