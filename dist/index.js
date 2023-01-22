@@ -16570,7 +16570,7 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(2186)
 const Github = __nccwpck_require__(8396)
 const Vercel = __nccwpck_require__(847)
-const { addSchema } = __nccwpck_require__(8505)
+const { addSchema, removeSchema } = __nccwpck_require__(8505)
 const crypto = __nccwpck_require__(6113)
 
 const {
@@ -16737,6 +16737,12 @@ const run = async () => {
 
 			if (CREATE_COMMENT) {
 				core.info('Creating new comment on PR')
+
+				const extraUrls = deploymentUrls
+					.filter((url) => url !== previewUrl)
+					.map((url) => `<a href="${ url }">${ removeSchema(url) }</a>`)
+					.join('<br/>')
+
 				const body = `
 					This pull request has been deployed to Vercel.
 
@@ -16746,12 +16752,15 @@ const run = async () => {
 							<td><code>${ SHA.substring(0, 7) }</code></td>
 						</tr>
 						<tr>
-							<td><strong>✅ Preview:</strong></td>
-							<td><a href='${ previewUrl }'>${ previewUrl }</a></td>
+							<td ${ extraUrls && `valign="top" rowspan="2"` }>
+								<strong>✅ Preview:</strong>
+							</td>
+							<td><a href='${ previewUrl }'>${ removeSchema(previewUrl) }</a></td>
 						</tr>
+						${ extraUrls && `<tr><td>${ extraUrls }</td></tr>` }
 						<tr>
 							<td><strong>🔍 Inspect:</strong></td>
-							<td><a href='${ deployment.inspectorUrl }'>${ deployment.inspectorUrl }</a></td>
+							<td><a href='${ deployment.inspectorUrl }'>${ removeSchema(deployment.inspectorUrl) }</a></td>
 						</tr>
 						<tr>
 							<td><strong>🕐 Updated:</strong></td>
