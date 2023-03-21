@@ -16227,13 +16227,8 @@ const execCmd = (command, args, cwd) => {
 	})
 }
 
-const addSchema = (url) => {
-	const regex = /^https?:\/\//
-	if (!regex.test(url)) {
-		return `https://${ url }`
-	}
-
-	return url
+const makeUrl = (url) => {
+	return `https://${ url.replace(/^https?:\/\//, '').replaceAll('/', '-') }`
 }
 
 const removeSchema = (url) => {
@@ -16243,7 +16238,7 @@ const removeSchema = (url) => {
 
 module.exports = {
 	exec: execCmd,
-	addSchema,
+	makeUrl,
 	removeSchema
 }
 
@@ -16570,7 +16565,7 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(2186)
 const Github = __nccwpck_require__(8396)
 const Vercel = __nccwpck_require__(847)
-const { addSchema, removeSchema } = __nccwpck_require__(8505)
+const { makeUrl, removeSchema } = __nccwpck_require__(8505)
 const crypto = __nccwpck_require__(6113)
 
 const {
@@ -16657,7 +16652,6 @@ const run = async () => {
 			const previewDomainSuffix = '.vercel.app'
 			let nextAlias = alias
 
-
 			if (alias.endsWith(previewDomainSuffix)) {
 				let prefix = alias.substring(0, alias.indexOf(previewDomainSuffix))
 
@@ -16674,8 +16668,10 @@ const run = async () => {
 				}
 			}
 
-			await vercel.assignAlias(nextAlias)
-			deploymentUrls.push(addSchema(nextAlias))
+			const aliasUrl = makeUrl(nextAlias)
+
+			await vercel.assignAlias(aliasUrl)
+			deploymentUrls.push(aliasUrl)
 		}
 
 		if (ALIAS_DOMAINS) {
@@ -16699,25 +16695,26 @@ const run = async () => {
 					.replace('{SHA}', SHA.substring(0, 7))
 					.toLowerCase()
 
-				await vercel.assignAlias(alias)
+				const aliasUrl = makeUrl(alias)
 
-				deploymentUrls.push(addSchema(alias))
+				await vercel.assignAlias(aliasUrl)
+				deploymentUrls.push(aliasUrl)
 			}
 		}
 
-		deploymentUrls.push(addSchema(deploymentUrl))
+		deploymentUrls.push(makeUrl(deploymentUrl))
 
 		if (
 			PRIMARY_ALIAS &&
       PRIMARY_ALIAS !== '{AUTO}' &&
-      !deploymentUrls.includes(PRIMARY_ALIAS)
+      !deploymentUrls.includes(makeUrl(PRIMARY_ALIAS))
 		) {
-			deploymentUrls.push(addSchema(PRIMARY_ALIAS))
+			deploymentUrls.push(makeUrl(PRIMARY_ALIAS))
 		}
 
 		const previewUrl = !PRIMARY_ALIAS ?
 			deploymentUrls[0] :
-			addSchema(PRIMARY_ALIAS === '{AUTO}' ? deploymentUrl : PRIMARY_ALIAS)
+			makeUrl(PRIMARY_ALIAS === '{AUTO}' ? deploymentUrl : PRIMARY_ALIAS)
 
 		const deployment = await vercel.getDeployment()
 		core.info(`Deployment "${ deployment.id }" available at: ${ deploymentUrls.join(', ') }`)

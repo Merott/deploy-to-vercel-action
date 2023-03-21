@@ -28,13 +28,8 @@ const execCmd = (command, args, cwd) => {
 	})
 }
 
-const addSchema = (url) => {
-	const regex = /^https?:\/\//
-	if (!regex.test(url)) {
-		return `https://${ url }`
-	}
-
-	return url
+const makeUrl = (url) => {
+	return `https://${ url.replace(/^https?:\/\//, '').replaceAll('/', '-') }`
 }
 
 const removeSchema = (url) => {
@@ -44,6 +39,6 @@ const removeSchema = (url) => {
 
 module.exports = {
 	exec: execCmd,
-	addSchema,
+	makeUrl,
 	removeSchema
 }
