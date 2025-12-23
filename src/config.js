@@ -96,6 +96,10 @@ const context = {
 		key: 'BUILD_ENV',
 		type: 'array'
 	}),
+	RUNTIME_ENV: parser.getInput({
+		key: 'RUNTIME_ENV',
+		type: 'array'
+	}),
 	PREBUILT: parser.getInput({
 		key: 'PREBUILT',
 		type: 'boolean',

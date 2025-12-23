@@ -14,6 +14,7 @@ const {
 	REF,
 	TRIM_COMMIT_MESSAGE,
 	BUILD_ENV,
+	RUNTIME_ENV,
 	PREBUILT,
 	WORKING_DIRECTORY,
 	FORCE
@@ -67,6 +68,12 @@ const init = () => {
 		if (BUILD_ENV) {
 			BUILD_ENV.forEach((item) => {
 				commandArguments = commandArguments.concat([ '--build-env', item ])
+			})
+		}
+
+		if (RUNTIME_ENV) {
+			RUNTIME_ENV.forEach((item) => {
+				commandArguments = commandArguments.concat([ '--env', item ])
 			})
 		}
 
